@@ -1,0 +1,2 @@
+# conbot-client
+Golang bot
