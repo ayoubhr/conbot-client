@@ -22,9 +22,7 @@ type Resp struct {
 
 func uriBuilder(quantity, fromCurrency, toCurrency string) string {
 	// Building the uri with the received parameters
-	uri := "http://localhost:8080/convert?from=" + fromCurrency + "&to=" + toCurrency + "&q=" + quantity
-
-	return uri
+	return "http://localhost:8080/convert?from=" + fromCurrency + "&to=" + toCurrency + "&q=" + quantity
 }
 
 func convertService(uri string) Resp {
@@ -38,7 +36,10 @@ func convertService(uri string) Resp {
 	// Decodes the response value representing the result
 	// into a variable of type Resp and returns it.
 	var resp Resp
-	_ = json.NewDecoder(res.Body).Decode(&resp)
+	err := json.NewDecoder(res.Body).Decode(&resp)
+	if err != nil {
+		fmt.Println("conbot service is not available.")
+	}
 
 	return resp
 }
@@ -46,7 +47,7 @@ func convertService(uri string) Resp {
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println("Environment variables could not load.")
+		log.Fatalln("Environment variables could not load.")
 	}
 
 	pref := tele.Settings{
@@ -56,7 +57,7 @@ func main() {
 
 	b, err := tele.NewBot(pref)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 		return
 	}
 
